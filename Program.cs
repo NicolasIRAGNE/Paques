@@ -195,7 +195,7 @@ class Salut
 
     }
 
-    static void Main(string[] args)
+    static void Fetes()
     {
         string anneeStr;
         int annee;
@@ -211,6 +211,7 @@ class Salut
         }
         decennie = annee / 10;
         decennie = decennie * 10;
+        Console.Clear();
         Console.WriteLine("Fêtes mobiles de l'année " + annee + ":");
         FetesMobiles(annee);
         Console.WriteLine("Dates de Pâques de " + decennie + " à " + (decennie + 10) + ":");
@@ -223,6 +224,47 @@ class Salut
                 Console.WriteLine(MeeusGregorien(annee).ToString("dd/MM/yyyy"));
             annee++;
         }
-        Console.ReadLine();
+        Console.WriteLine("Appuyez sur une touche pour continuer...");
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    static void CalendrierPerpetuel()
+    {
+        Console.Clear();
+        Console.WriteLine("Entrer une date sous format jj/mm/aaaa");
+        string input = Console.ReadLine();
+        string verbe = " était";
+        DateTime date = new DateTime(Convert.ToInt32(input.Substring(6, 4)), Convert.ToInt32(input.Substring(3, 2)), Convert.ToInt32(input.Substring(0, 2)));
+        DateTime now = DateTime.Now;
+        if (DateTime.Compare(date, now) > 0)
+            verbe = " sera";
+        Console.WriteLine("Le " + date.ToString("dd/MM/yyyy") + verbe + " un " + date.ToString("dddd", new System.Globalization.CultureInfo("fr-FR")) + ".\n");
+        Console.WriteLine("Appuyez sur une touche pour continuer...");
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("A: Fetes");
+        Console.WriteLine("B: Calendrier perpetuel");
+        Console.WriteLine("Echap: Quitter");
+        ConsoleKeyInfo key = Console.ReadKey();
+        while (key.Key != ConsoleKey.Escape)
+        {
+            Console.Clear();
+
+            if (key.Key == ConsoleKey.A)
+                Fetes();
+            else if (key.Key == ConsoleKey.B)
+                CalendrierPerpetuel();
+            else
+                Console.WriteLine("Erreur: Touche non reconnue");
+            Console.WriteLine("A: Fetes");
+            Console.WriteLine("B: Calendrier perpetuel");
+            Console.WriteLine("Echap: Quitter");
+            key = Console.ReadKey();
+        }
     }
 }
