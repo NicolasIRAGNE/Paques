@@ -4,6 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+static class Touches
+{
+    public const ConsoleKey TOUCHE_1 = ConsoleKey.A;
+    public const ConsoleKey TOUCHE_2 = ConsoleKey.B;
+    public const ConsoleKey TOUCHE_3 = ConsoleKey.C;
+    public const ConsoleKey TOUCHE_QUITTER = ConsoleKey.Escape;
+}
+
 class Salut
 {
     static bool Anneebissextile(int annee)
@@ -191,7 +199,7 @@ class Salut
         Console.WriteLine("Pentecôte:                             " + Conway(annee).AddDays(49).ToString("dd/MM"));
         Console.WriteLine("Lundi de Pentecôte:                    " + Conway(annee).AddDays(50).ToString("dd/MM"));
         Console.WriteLine("Fête de la Sainte Trinité / Toussaint: " + Conway(annee).AddDays(56).ToString("dd/MM"));
-        Console.WriteLine("Fête-Dieu:                             " + Conway(annee).AddDays(60).ToString("dd/MM"));
+        Console.WriteLine("Fête-Dieu:                             " + Conway(annee).AddDays(60).ToString("dd/MM") + "\n");
 
     }
 
@@ -224,46 +232,88 @@ class Salut
                 Console.WriteLine(MeeusGregorien(annee).ToString("dd/MM/yyyy"));
             annee++;
         }
-        Console.WriteLine("Appuyez sur une touche pour continuer...");
-        Console.ReadKey();
-        Console.Clear();
+        Validation();
     }
 
     static void CalendrierPerpetuel()
     {
         Console.Clear();
-        Console.WriteLine("Entrer une date sous format jj/mm/aaaa");
+        Console.WriteLine("Entrez une date sous format jj/mm/aaaa");
         string input = Console.ReadLine();
         string verbe = " était";
         DateTime date = new DateTime(Convert.ToInt32(input.Substring(6, 4)), Convert.ToInt32(input.Substring(3, 2)), Convert.ToInt32(input.Substring(0, 2)));
         DateTime now = DateTime.Now;
         if (DateTime.Compare(date, now) > 0)
             verbe = " sera";
-        Console.WriteLine("Le " + date.ToString("dd/MM/yyyy") + verbe + " un " + date.ToString("dddd", new System.Globalization.CultureInfo("fr-FR")) + ".\n");
-        Console.WriteLine("Appuyez sur une touche pour continuer...");
+        Console.WriteLine("Le " + date.ToString("dd/MM/yyyy") + verbe + " un " + date.ToString("dddd", new System.Globalization.CultureInfo("fr-FR")) + ".");
+        Validation();
+    }
+
+    static void CalendrierLunaire()
+    {
+        Console.WriteLine("Entrez une date sous format jj/mm/aaaa comprise entre 2000 et 2009");
+        string input = Console.ReadLine();
+        string phase = "";
+        DateTime date = new DateTime(Convert.ToInt32(input.Substring(6, 4)), Convert.ToInt32(input.Substring(3, 2)), Convert.ToInt32(input.Substring(0, 2)));
+        if (date.Year > 2009 || date.Year < 2000)
+        {
+            Console.WriteLine("Erreur: entrez une date comprise entre 2000 et 2009");
+            Validation();
+            return;
+        }
+
+        int age = Convert.ToInt32(input.Substring(6, 1)) + Convert.ToInt32(input.Substring(7, 1)) + Convert.ToInt32(input.Substring(8, 1)) + Convert.ToInt32(input.Substring(9, 1));
+        age *= 11;
+        age %= 30;
+        age += Convert.ToInt32(input.Substring(3, 2));
+        if (Convert.ToInt32(input.Substring(3, 2)) == 1 || Convert.ToInt32(input.Substring(3, 2)) == 2)
+            age += 1;
+        age %= 30;
+        age += Convert.ToInt32(input.Substring(0, 2));
+        age %= 30;
+        if (age < 7)
+            phase = "nouvelle lune";
+        else if (age < 15)
+            phase = "premier quartier";
+        else if (age < 22)
+            phase = "pleine lune";
+        else if (age < 30)
+            phase = "dernier quartier";
+        Console.WriteLine("Le " + input + ", la lune était âgée de " + age + " jours, ce qui correspond environ a: " + phase + ".");
+        Validation();
+    }
+
+    static void ListeOptions()
+    {
+        Console.WriteLine(Touches.TOUCHE_1  + ": Fetes");
+        Console.WriteLine(Touches.TOUCHE_2 + ": Calendrier perpetuel");
+        Console.WriteLine(Touches.TOUCHE_3 + ": Calendrier lunaire (de 2000 à 2009)");
+        Console.WriteLine("Echap: Quitter");
+    }
+
+    static void Validation()
+    {
+        Console.WriteLine("\nAppuyez sur une touche pour continuer...");
         Console.ReadKey();
         Console.Clear();
     }
 
     static void Main(string[] args)
     {
-        Console.WriteLine("A: Fetes");
-        Console.WriteLine("B: Calendrier perpetuel");
-        Console.WriteLine("Echap: Quitter");
+        ListeOptions();
         ConsoleKeyInfo key = Console.ReadKey();
-        while (key.Key != ConsoleKey.Escape)
+        while (key.Key != Touches.TOUCHE_QUITTER)
         {
             Console.Clear();
-
-            if (key.Key == ConsoleKey.A)
+            if (key.Key == Touches.TOUCHE_1)
                 Fetes();
-            else if (key.Key == ConsoleKey.B)
+            else if (key.Key == Touches.TOUCHE_2)
                 CalendrierPerpetuel();
+            else if (key.Key == Touches.TOUCHE_3)
+                CalendrierLunaire();
             else
                 Console.WriteLine("Erreur: Touche non reconnue");
-            Console.WriteLine("A: Fetes");
-            Console.WriteLine("B: Calendrier perpetuel");
-            Console.WriteLine("Echap: Quitter");
+            ListeOptions();
             key = Console.ReadKey();
         }
     }
